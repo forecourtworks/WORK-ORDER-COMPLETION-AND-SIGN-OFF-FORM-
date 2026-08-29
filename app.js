@@ -622,8 +622,8 @@
       }
 
       // Header — white background for B&W print visibility (logo + address mandatory)
-      // Expanded height to accommodate logo (top) + address below it on left, title on right
-      const headerH = 36;
+      // Expanded height for logo (top-left), address under logo, title top-right
+      const headerH = 38;
       doc.setFillColor(255, 255, 255);
       doc.rect(0, 0, pageW, headerH, 'F');
       // Accent rule under header
@@ -631,11 +631,16 @@
       doc.rect(0, headerH, pageW, 1.2, 'F');
 
       // Logo top-left (legible size for print)
+      let logoDrawn = false;
       try {
-        const logoW = 52;
-        const logoH = 9;
-        doc.addImage(LOGO_DATA_URL, 'PNG', margin, 4, logoW, logoH);
+        const logoW = 48;
+        const logoH = 8.5;
+        doc.addImage(LOGO_DATA_URL, 'PNG', margin, 3.5, logoW, logoH);
+        logoDrawn = true;
       } catch (e) {
+        logoDrawn = false;
+      }
+      if (!logoDrawn) {
         // Fallback text if logo fails
         doc.setTextColor(...navy);
         doc.setFont('helvetica', 'bold');
@@ -643,19 +648,23 @@
         doc.text('FORECOURT WORKS LTD', margin, 9);
       }
 
-      // Address under logo (top-left)
-      doc.setTextColor(30, 30, 30);
+      // Address under logo (top-left) — mandatory print visibility
+      doc.setTextColor(20, 20, 20);
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(7);
-      doc.text('Ramco Court, Gate 3B, Bellevue, South C.', margin, 17);
-      doc.text('Phone: +(254) 729-002-087  |  Email: dispatcher@forecourtworks.co.ke', margin, 21);
+      doc.text('Ramco Court, Gate 3B, Bellevue, South C.', margin, 16.5);
+      doc.text('Phone: +(254) 729-002-087  |  Email: dispatcher@forecourtworks.co.ke', margin, 20.5);
+      doc.setFontSize(6.5);
+      doc.setTextColor(...navy);
+      doc.text('FORECOURT WORKS LTD', margin, 24.5);
 
-      // Document title top-right
+      // Document title top-right — mandatory, prominent
       doc.setTextColor(...navy);
       doc.setFont('helvetica', 'bold');
-      doc.setFontSize(9);
-      const titleLines = doc.splitTextToSize('WORK ORDER COMPLETION & SIGN-OFF FORM', 70);
-      doc.text(titleLines, pageW - margin, 10, { align: 'right' });
+      doc.setFontSize(10);
+      // Draw as two explicit lines for reliable right-align and visibility
+      doc.text('WORK ORDER COMPLETION', pageW - margin, 11, { align: 'right' });
+      doc.text('& SIGN-OFF FORM', pageW - margin, 16, { align: 'right' });
 
       y = headerH + 5;
 
